@@ -7,59 +7,74 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel"
-
-function generateDatesArray(length) {
-  const dates = []
-  const today = new Date()
-
-  for (let i = 0; i < length; i++) {
-    const currentDate = new Date(today)
-    currentDate.setDate(today.getDate() + i)
-    dates.push(currentDate.toDateString())
-  }
-
-  return dates
-}
+import { generateDatesArray, getPrefixedDate } from "@/lib/date"
 
 export function CarouselTimes() {
-  const [api, setApi] = useState()
+  const [api, setApi] = useState(null)
+  const [activeIndex, setActiveIndex] = useState(0)
 
-	const numberOfItems = 5 // Define how many items you want in the carousel
+  const numberOfItems = 5 // Define how many items you want in the carousel
   const dates = generateDatesArray(numberOfItems)
 
-	useEffect(() => {
-		console.log("API object:", api) // Add this line to check if the API object is set correctly
-		if (!api) return
-	
-		const handleSelect = () => {
-			console.log('CAAW')
-			console.log("Next button clicked. Current index:", api.selectedScrollSnap())
-		}
-	
-		api.on("select", handleSelect)
+  useEffect(() => {
+    if (!api) return
 
-		return () => {
-			api.off("select", handleSelect)
-		}
-	}, [api])
+    const handleSelect = () => {
+      setActiveIndex(api.selectedScrollSnap()) // Update the active index state when the carousel index changes
+    }
+
+    api.on("select", handleSelect)
+
+    // Cleanup on unmount
+    return () => {
+      api.off("select", handleSelect)
+    }
+  }, [api])
+
+  const handleItemClick = (index) => {
+		setActiveIndex(index)
+    if (api) {
+      api.scrollTo(index)
+    }
+  }
+
+	const handleNextClick = () => {
+		const nextIndex = activeIndex + 1
+		setActiveIndex(nextIndex)
+		if (api) {
+      api.scrollTo(nextIndex)
+    }
+  }
 
   return (
-    <Carousel className="w-full max-w-sm" setApi={setApi}>
+    <Carousel className="w-full" setApi={setApi}>
       <CarouselContent className="-ml-1">
-        {dates.map((date, index) => (
-          <CarouselItem key={index} className="pl-1 md:basis-1/2 lg:basis-1/2">
-            <div className="p-1">
-              <Card>
-                <CardContent className="flex items-center justify-center p-6">
-                  <span className="text-2xl font-semibold">{ date }</span>
-                </CardContent>
-              </Card>
-            </div>
-          </CarouselItem>
-        ))}
+        {dates.map((date, index) => {
+          const isActive = activeIndex === index
+          const cardClassName = isActive ? "bg-blue-500" : "bg-white"
+          const textClassName = isActive ? "text-white font-bold" : "text-black"
+
+          return (
+            <CarouselItem 
+              key={index} 
+              className="basis-1/3 cursor-pointer"
+              onClick={() => handleItemClick(index)}
+            >
+              <div className="p-1">
+                <Card className={`border-none ${cardClassName}`}>
+                  <CardContent className={`flex items-center justify-center p-6 ${textClassName}`}>
+                    <span className="text-2xl">
+                      { getPrefixedDate(date, index) }
+                    </span>
+                  </CardContent>
+                </Card>
+              </div>
+            </CarouselItem>
+          )
+        })}
       </CarouselContent>
       <CarouselPrevious />
-      <CarouselNext />
+      <CarouselNext onClick={() => handleNextClick()} />
     </Carousel>
   )
 }

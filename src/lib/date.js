@@ -1,16 +1,25 @@
-export function generateDatesArray(length) {
+
+import { format, addDays } from "date-fns"
+
+const generateDatesArray = (length) => {
   const dates = []
-  const today = new Date()
+  const todayDate = new Date()
 
   for (let i = 0; i < length; i++) {
-    const currentDate = new Date(today)
-    currentDate.setDate(today.getDate() + i)
-
-    const day = String(currentDate.getDate()).padStart(2, '0')
-    const month = String(currentDate.getMonth() + 1).padStart(2, '0')
-
-    dates.push(`${day}.${month}`)
+    const currentDate = addDays(todayDate, i)
+    dates.push(format(currentDate, "dd.MM"))
   }
 
   return dates
 }
+
+const getPrefixedDate = (date, index) => {
+	if (index === 0) {
+		return `Dnes ${date}`
+	} else if (index === 1) {
+		return `Zítra ${date}`
+	}
+	return date
+}
+
+export { getPrefixedDate, generateDatesArray }

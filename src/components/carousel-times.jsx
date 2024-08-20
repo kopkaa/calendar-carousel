@@ -9,23 +9,23 @@ import {
 } from "@/components/ui/carousel"
 import { generateDatesArray, getPrefixedDate } from "@/lib/date"
 
+const DATE_ITEMS_LENGTH = 5
+
 export function CarouselTimes() {
   const [api, setApi] = useState(null)
   const [activeIndex, setActiveIndex] = useState(0)
 
-  const numberOfItems = 5 // Define how many items you want in the carousel
-  const dates = generateDatesArray(numberOfItems)
+  const dates = generateDatesArray(DATE_ITEMS_LENGTH)
 
   useEffect(() => {
     if (!api) return
 
     const handleSelect = () => {
-      setActiveIndex(api.selectedScrollSnap()) // Update the active index state when the carousel index changes
+      setActiveIndex(api.selectedScrollSnap())
     }
 
     api.on("select", handleSelect)
 
-    // Cleanup on unmount
     return () => {
       api.off("select", handleSelect)
     }
@@ -40,9 +40,23 @@ export function CarouselTimes() {
 
 	const handleNextClick = () => {
 		const nextIndex = activeIndex + 1
+		if(DATE_ITEMS_LENGTH <= nextIndex) {
+			return
+		}
 		setActiveIndex(nextIndex)
 		if (api) {
       api.scrollTo(nextIndex)
+    }
+  }
+
+	const handlePreviousClick = () => {
+		const previousIndex = activeIndex - 1
+		if(previousIndex < 0) {
+			return
+		}
+		setActiveIndex(previousIndex)
+		if (api) {
+      api.scrollTo(previousIndex)
     }
   }
 
@@ -73,7 +87,7 @@ export function CarouselTimes() {
           )
         })}
       </CarouselContent>
-      <CarouselPrevious />
+      <CarouselPrevious onClick={() => handlePreviousClick()} />
       <CarouselNext onClick={() => handleNextClick()} />
     </Carousel>
   )

@@ -1,11 +1,13 @@
 import './App.css'
-import { CarouselTimes } from '@/components/carousel-times'
+import { CarouselDates } from '@/components/carousel-dates'
+import { TimesGrid } from '@/components/times-grid'
 
 function App() {
   return (
     <>
-    <main className="w-full flex justify-center">
-      <CarouselTimes/>
+    <main className="w-full flex flex-col justify-center">
+      <CarouselDates/>
+			<TimesGrid/>
     </main>
     </>
   )

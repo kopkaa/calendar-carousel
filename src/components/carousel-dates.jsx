@@ -11,7 +11,7 @@ import { generateDatesArray, getPrefixedDate } from "@/lib/date"
 
 const DATE_ITEMS_LENGTH = 5
 
-export function CarouselTimes() {
+export function CarouselDates() {
   const [api, setApi] = useState(null)
   const [activeIndex, setActiveIndex] = useState(0)
 
@@ -63,7 +63,7 @@ export function CarouselTimes() {
   return (
     <Carousel className="w-full" setApi={setApi}>
       <CarouselContent className="-ml-1">
-        {dates.map((date, index) => {
+        { dates.map((date, index) => {
           const isActive = activeIndex === index
           const cardClassName = isActive ? "bg-blue-500" : "bg-white"
           const textClassName = isActive ? "text-white font-bold" : "text-black"

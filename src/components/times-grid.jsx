@@ -3,13 +3,13 @@ import { generateTimeSlots } from "@/lib/date"
 
 
 
-export function TimesGrid() {
+export function TimesGrid({ index }) {
 	const [timeSlots, setTimeSlots] = useState([])
 
 	useEffect(() => {
 			const slots = generateTimeSlots()
 			setTimeSlots(slots)
-	}, [])
+	}, [index])
 
 	const capacityFormatted = (capacity, originalCapacity) => {
     return `(${capacity}/${originalCapacity})`

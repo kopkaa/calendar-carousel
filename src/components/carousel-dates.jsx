@@ -11,30 +11,32 @@ import { generateDatesArray, getPrefixedDate } from "@/lib/date"
 
 const DATE_ITEMS_LENGTH = 5
 
-export function CarouselDates() {
-  const [api, setApi] = useState(null)
+export function CarouselDates({ onIndexChange }) {
+  const [carouselApi, setCarouselApi] = useState(null)
   const [activeIndex, setActiveIndex] = useState(0)
 
   const dates = generateDatesArray(DATE_ITEMS_LENGTH)
 
   useEffect(() => {
-    if (!api) return
+    if (!carouselApi) return
 
     const handleSelect = () => {
-      setActiveIndex(api.selectedScrollSnap())
+      setActiveIndex(carouselApi.selectedScrollSnap())
     }
-
-    api.on("select", handleSelect)
-
+    carouselApi.on("select", handleSelect)
     return () => {
-      api.off("select", handleSelect)
+      carouselApi.off("select", handleSelect)
     }
-  }, [api])
+  }, [carouselApi])
+
+	useEffect(() => {
+    onIndexChange(activeIndex)
+  }, [activeIndex])
 
   const handleItemClick = (index) => {
 		setActiveIndex(index)
-    if (api) {
-      api.scrollTo(index)
+    if (carouselApi) {
+      carouselApi.scrollTo(index)
     }
   }
 
@@ -44,8 +46,8 @@ export function CarouselDates() {
 			return
 		}
 		setActiveIndex(nextIndex)
-		if (api) {
-      api.scrollTo(nextIndex)
+		if (carouselApi) {
+      carouselApi.scrollTo(nextIndex)
     }
   }
 
@@ -55,13 +57,13 @@ export function CarouselDates() {
 			return
 		}
 		setActiveIndex(previousIndex)
-		if (api) {
-      api.scrollTo(previousIndex)
+		if (carouselApi) {
+      carouselApi.scrollTo(previousIndex)
     }
   }
 
   return (
-    <Carousel className="w-full" setApi={setApi}>
+    <Carousel className="w-full" setApi={setCarouselApi}>
       <CarouselContent className="-ml-1">
         { dates.map((date, index) => {
           const isActive = activeIndex === index
